@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinOps Assessment Tool</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #E3E3E3;
+            color: #000;
+            animation: fadeIn 1s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        header {
+            background-color: #CC112F;
+            color: white;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .clock-container {
+            flex: 1;
+            text-align: left;
+        }
+
+        #clock, #date {
+            margin: 5px 0;
+        }
+
+        .center-content {
+            flex: 2;
+            text-align: center;
+        }
+
+        .center-content h1 {
+            margin: 0 0 10px 0;
+        }
+
+        nav {
+            margin-top: 10px;
+        }
+
+        nav a {
+            margin: 0 15px;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .end-content {
+            flex: 1;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .end-content img {
+            height: 100px;
+        }
+
+        main {
+            padding: 2rem;
+            max-width: 900px;
+            margin: 20px auto;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            animation: popIn 0.5s ease-out;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        h2, h3 {
+            color: rgb(0, 0, 0);
+            margin: 0;
+            padding-bottom: 5px;
+            text-decoration: underline;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        @keyframes fadeInUp {
+            from { transform: translateY(10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        p {
+            margin: 0.5rem 0;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        th {
+            background-color: #CC112F;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            border: #f1f1f1;
+        }
+
+        th, td {
+            border: 1px solid rgb(142, 144, 144);
+            padding: 10px;
+            text-align: left;
+        }
+
+        td {
+            background-color: #f9f9f9;
+        }
+
+        td:nth-child(2) {
+            text-align: center;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .link {
+            background: #CC112F;
+            border: 1px solid #CC112F;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            text-decoration: none;
+            padding: 20px 15px;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .link:hover {
+            color: #CC112F;
+            background-color: white;
+        }
+
+        .knowledge { background-color: rgba(207, 10, 44, 0.1); }
+        .process { background-color: rgba(0, 0, 0, 0.1); }
+        .metrics { background-color: rgba(142, 144, 144, 0.1); }
+        .adoption { background-color: rgba(207, 10, 44, 0.2); }
+        .automation { background-color: rgba(0, 0, 0, 0.2); }
+
+        #welcome-page, #details-page {
+            min-height: calc(100vh - 120px);
+            width: 100%;
+            transition: opacity 0.3s ease;
+        }
+
+        #details-page {
+            display: none;
+        }
+
+        #details-page main {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 2rem;
+        }
+
+        .back-button {
+            margin: 20px 0 20px 20px;
+            max-width: none;
+            width: fit-content;
+            background: none;
+            border: none;
+            color: #CC112F;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .back-button:hover {
+            text-decoration: underline;
+        }
+
+        .back-button::before {
+            content: "←";
+            margin-right: 8px;
+            font-size: 20px;
+        }
+
+        .details-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="clock-container">
+            <div id="clock"></div>
+            <div id="date"></div>
+        </div>
+
+        <div class="center-content">
+            <h1>FinOps Assessment Tool</h1>
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="assessment.html">Take Assessment</a>
+                <a href="results.html">Results</a>
+            </nav>
+        </div>
+
+        <div class="end-content">
+            <img src="LOGO1.png" alt="Logo">
+        </div>
+    </header>
+
+    <div id="welcome-page">
+        <main>
+            <h2>Welcome</h2>
+            <p>The FinOps Assessment Tool helps you evaluate and enhance your cloud financial operations maturity through systematic assessment across multiple categories like Knowledge, Process, Metrics, Adoption, and Automation.</p>
+            
+            <h3 class="bold">Refer to these "lenses" when taking the assessment:</h3>
+            <p><strong>Knowledge:</strong> Understanding and awareness within the target group.</p>
+            <p><strong>Process:</strong> Consistent and formalized processes in place.</p>
+            <p><strong>Metrics:</strong> Measurements and insights into progress.</p>
+            <p><strong>Adoption:</strong> Level of adoption and standardization within the group.</p>
+            <p><strong>Automation:</strong> Automation of repeatable tasks and workflows.</p>
+
+            <button class="link" onclick="showDetails()">LEARN MORE</button>
+        </main>
+    </div>
+
+    <div id="details-page">
+        <button class="back-button" onclick="showWelcome()">Back to Welcome</button>
+        <div class="details-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Lens</th>
+                        <th>Maturity Level</th>
+                        <th>Heading</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Knowledge -->
+                    <tr class="knowledge">
+                        <td class="bold">Knowledge</td>
+                        <td>0</td>
+                        <td>No Knowledge</td>
+                        <td>At this level, knowledge of the capability as defined by the framework is effectively non-existent within the target group. There are no discussions happening about this capability, and nobody is actively involved in developing any further knowledge.</td>
+                    </tr>
+                    <tr class="knowledge">
+                        <td></td>
+                        <td>1</td>
+                        <td>Partial Knowledge</td>
+                        <td>Preliminary knowledge of the Capability being assessed is now beginning to spread amongst key stakeholders and individuals, but the capability is not yet common knowledge across the target group.</td>
+                    </tr>
+                    <tr class="knowledge">
+                        <td></td>
+                        <td>2</td>
+                        <td>Developing Knowledge</td>
+                        <td>Basic knowledge of the Capability is understood by a limited number of key stakeholders but information is limited in unscaled disbursements.</td>
+                    </tr>
+                    <tr class="knowledge">
+                        <td></td>
+                        <td>3</td>
+                        <td>Full Knowledge</td>
+                        <td>Strong knowledge of the assessed capability is known throughout the target group, incorporated with starter onboarding and periodic reinforcement via training or other appropriate communication methods.</td>
+                    </tr>
+                    <tr class="knowledge">
+                        <td></td>
+                        <td>4</td>
+                        <td>Knowledge Leader</td>
+                        <td>The target group is now driving awareness of this capability beyond itself to other peer groups and the wider industry. Leveraging deep awareness across individuals in the group, working to improve awareness and build new insights into the capability.</td>
+                    </tr>
+                    <!-- Process -->
+                    <tr class="process">
+                        <td class="bold">Process</td>
+                        <td>0</td>
+                        <td>No Process</td>
+                        <td>There are no described, consistent processes in place governing any aspect of the assessed capability within the target group.</td>
+                    </tr>
+                    <tr class="process">
+                        <td></td>
+                        <td>1</td>
+                        <td>Implementing Process</td>
+                        <td>Processes to standardise this assessed capability are being formed, defined and possibly tested. Processes are not yet formalised as BAU for the target group.</td>
+                    </tr>
+                    <tr class="process">
+                        <td></td>
+                        <td>2</td>
+                        <td>Developing POC Process</td>
+                        <td>Relevant, functional processes are now in place, agreed upon and being followed by at least some of the teams.</td>
+                    </tr>
+                    <tr class="process">
+                        <td></td>
+                        <td>3</td>
+                        <td>Scaled Process</td>
+                        <td>Scaled processes are now in place, documented and you've implemented periodic feedback loops.</td>
+                    </tr>
+                    <tr class="process">
+                        <td></td>
+                        <td>4</td>
+                        <td>Mature (Agile) Process</td>
+                        <td>Clearly defined, transparent, and fully integrated processes are now universally established and consistent. This does not necessarily mean there is one process for each task but that processes in place are all in this state. Processes are being iterated on with key stakeholder feedback and ongoing agile refinement.</td>
+                    </tr>
+                    <!-- Metrics -->
+                    <tr class="metrics">
+                        <td class="bold">Metrics</td>
+                        <td>0</td>
+                        <td>No Metrics</td>
+                        <td>There are no measurements being taken at this point. No direct insight is available concerning the progress or current state of this capability.</td>
+                    </tr>
+                    <tr class="metrics">
+                        <td></td>
+                        <td>1</td>
+                        <td>Identified Metrics</td>
+                        <td>Identified key metrics the business finds valuable for this capability to make trade-off decisions.</td>
+                    </tr>
+                    <tr class="metrics">
+                        <td></td>
+                        <td>2</td>
+                        <td>Baselined Metrics</td>
+                        <td>Initial, manually generated metrics are in place providing rudimentary traffic-light (e.g., Red/Yellow/Green) measurement of this capability.</td>
+                    </tr>
+                    <tr class="metrics">
+                        <td></td>
+                        <td>3</td>
+                        <td>Established & Collecting Metric Targets Data</td>
+                        <td>KPIs are now in place covering at least some of this capability within the target group and cadence has been established for collection.</td>
+                    </tr>
+                    <tr class="metrics">
+                        <td></td>
+                        <td>4</td>
+                        <td>Mature, Global KPIs</td>
+                        <td>S.M.A.R.T. KPIs are now globally in place, automated and refined/iterated on with a regular cadence. Direct links to business goals. Direct link to business performance.</td>
+                    </tr>
+                    <!-- Adoption -->
+                    <tr class="adoption">
+                        <td class="bold">Adoption</td>
+                        <td>0</td>
+                        <td>No Adoption</td>
+                        <td>The capability is not in place anywhere within the target group.</td>
+                    </tr>
+                    <tr class="adoption">
+                        <td></td>
+                        <td>1</td>
+                        <td>Siloed Adoption</td>
+                        <td>Elements of the capability are being adopted by a siloed group, lacking standardization and evidence best practices.</td>
+                    </tr>
+                    <tr class="adoption">
+                        <td></td>
+                        <td>2</td>
+                        <td>Initial Standardized Adoption</td>
+                        <td>Early elements of the capability are being standardized and vetted by a few individuals within the target group.</td>
+                    </tr>
+                    <tr class="adoption">
+                        <td></td>
+                        <td>3</td>
+                        <td>Key Adoption</td>
+                        <td>Fully established standardized elements of the capability as a part majority target groups BAU (Business As Usual) behaviors.</td>
+                    </tr>
+                    <tr class="adoption">
+                        <td></td>
+                        <td>4</td>
+                        <td>Full Adoption</td>
+                        <td>The capability now exists in totality across all elements of the target group, and is being actively engaged with and worked on.</td>
+                    </tr>
+                    <!-- Automation -->
+                    <tr class="automation">
+                        <td class="bold">Automation</td>
+                        <td>0</td>
+                        <td>No Automation</td>
+                        <td>Virtually all of the required actions within the Capability are being executed manually at this stage.</td>
+                    </tr>
+                    <tr class="automation">
+                        <td></td>
+                        <td>1</td>
+                        <td>Identified Automation Opportunities</td>
+                        <td>Starting to identify and map your automation requirements for a solution that will reduce labor and time toil.</td>
+                    </tr>
+                    <tr class="automation">
+                        <td></td>
+                        <td>2</td>
+                        <td>Experimental Automation</td>
+                        <td>Early adoption of some key actions are beginning to be optimized through automated workflows and solutions.</td>
+                    </tr>
+                    <tr class="automation">
+                        <td></td>
+                        <td>3</td>
+                        <td>Primary Automation</td>
+                        <td>Primary or most demanding actions have now been offloaded to automation solutions.</td>
+                    </tr>
+                    <tr class="automation">
+                        <td></td>
+                        <td>4</td>
+                        <td>Full Automation</td>
+                        <td>All material, repeatable tasks within this capability are now automated, any new tasks are reviewed for automation potential or implemented as automation as the capability evolves.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function showDetails() {
+            document.getElementById('welcome-page').style.display = 'none';
+            document.getElementById('details-page').style.display = 'block';
+        }
+
+        function showWelcome() {
+            document.getElementById('details-page').style.display = 'none';
+            document.getElementById('welcome-page').style.display = 'block';
+        }
+
+        function updateClock() {
+            const now = new Date();
+            
+            const time = now.toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit' 
+            });
+            document.getElementById('clock').textContent = time;
+            
+            const date = now.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            document.getElementById('date').textContent = date;
+        }
+
+        updateClock();
+        setInterval(updateClock, 1000);
+    </script>
+</body>
+</html>

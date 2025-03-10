@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Take Assessment - FinOps Assessment Tool</title>
+  <style>
+    /* General Styles */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #E3E3E3;
+      color: #000;
+      animation: fadeIn 1s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    header {
+      background-color: #CC112F;
+      color: white;
+      padding: 1.5rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .clock-container {
+      flex: 1;
+      text-align: left;
+    }
+
+    #clock,
+    #date {
+      margin: 5px 0;
+    }
+
+    .center-content {
+      flex: 2;
+      text-align: center;
+    }
+
+    .center-content h1 {
+      margin: 0 0 10px 0;
+    }
+
+    nav {
+      margin-top: 10px;
+    }
+
+    nav a {
+      margin: 0 15px;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .end-content {
+      flex: 1;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .end-content img {
+      height: 100px;
+    }
+
+    main {
+      padding: 2rem;
+      max-width: 900px;
+      margin: 20px auto;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      color: rgb(0, 0, 0);
+      margin: 0 0 10px;
+      padding-bottom: 5px;
+      text-decoration: underline;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      font-weight: bold;
+      margin: 10px 0 5px;
+    }
+
+    input,
+    textarea,
+    select {
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    input[type="submit"] {
+      background-color: #CC112F;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 10px;
+      transition: background-color 0.3s;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #CC112F;
+    }
+
+    .checkbox-group {
+      margin-top: 20px;
+    }
+
+    .capabilities-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    .capabilities-table td {
+      padding: 10px;
+      vertical-align: middle;
+      line-height: 1.5;
+    }
+
+    .capabilities-table input[type="checkbox"] {
+      transform: scale(1.2);
+      vertical-align: middle;
+      margin: 0;
+      margin-right: 10px;
+    }
+
+    .score-bar {
+      width: 100%;
+      height: 5px;
+      background-color: #ccc;
+      position: relative;
+      margin: 20px 0;
+    }
+
+    .score-bar div {
+      height: 100%;
+      background-color: #CC112F;
+      width: 0%;
+      transition: width 0.3s;
+    }
+
+    .maturity-level {
+      margin-top: 10px;
+    }
+
+    .maturity-grid {
+      margin: 20px;
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    .maturity-grid th,
+    .maturity-grid td {
+      border: 1px solid #ccc;
+      padding: 15px;
+      text-align: center;
+    }
+
+    .capabilities-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+
+    #descriptions {
+      font-family: Arial, sans-serif;
+      margin-top: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      padding: 10px;
+      text-align: left;
+      border: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #f4f4f4;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    tr:hover {
+      background-color: #e2e2e2;
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      max-width: 500px;
+      width: 90%;
+      z-index: 1001;
+      animation: slideIn 0.3s ease-in-out;
+    }
+
+    .modal h3 {
+      margin-top: 0;
+      color: #333;
+    }
+
+    .modal-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .modal-button {
+      padding: 0.5rem 1.5rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .confirm-button {
+      background-color: #CC112F;
+      color: white;
+    }
+
+    .confirm-button:hover {
+      background-color: #a30d26;
+    }
+
+    .cancel-button {
+      background-color: #e2e2e2;
+      color: #333;
+    }
+
+    .cancel-button:hover {
+      background-color: #d1d1d1;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translate(-50%, -60%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translate(-50%, -50%);
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="clock-container">
+      <div id="clock"></div>
+      <div id="date"></div>
+    </div>
+
+    <div class="center-content">
+      <h1>FinOps Assessment Tool</h1>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="assessment.html">Take Assessment</a>
+        <a href="results.html">Results</a>
+      </nav>
+    </div>
+
+    <div class="end-content">
+      <img src="LOGO1.png" alt="Logo">
+    </div>
+  </header>
+
+  <main>
+    <h2>Take Assessment</h2>
+    <form action="http://127.0.0.1:5500/result.html" method="GET" id="assessmentForm">
+      <label for="name">Please enter your name *</label>
+      <input type="text" id="name" name="name" required>
+
+      <label for="email">Please enter your email address *</label>
+      <input type="email" id="email" name="email" required>
+
+      <label for="persona">Select a Persona *</label>
+      <select id="persona" name="persona" required onchange="enableCapabilities()">
+        <option value="" disabled selected>-- Select a persona --</option>
+      </select>
+
+      <div class="checkbox-group" id="capabilitiesGroup" style="display: none;">
+        <div class="capabilities-header">
+          <label>Select Capabilities *</label>
+          <label class="select-all-label" style="display: flex; align-items: center; justify-content: flex-end;">
+            <p style="margin-right: 40px; white-space: nowrap;">Select all</p>
+            <input type="checkbox" style="margin-right: 66px; margin-top: 17px; transform: scale(1.2);"
+              id="selectAllCheckbox" onclick="toggleSelectAll()">
+          </label>
+        </div>
+
+        <table class="capabilities-table" id="capabilities"></table>
+        <div class="score-bar" id="scoreBar">
+          <div></div>
+        </div>
+        <div id="descriptions" style="margin-top: 20px;"></div>
+      </div>
+
+      <div id="maturityGrids" style="margin-top: 20px;"></div>
+
+      <input type="submit" value="Submit">
+    </form>
+
+    <div id="thankYouMessage" style="display: none;">
+      <h2>Thank You for Submitting Your Details!</h2>
+      <p>Your details have been saved successfully. You can now view your results below.</p>
+      <a href="result.html" id="viewResultsLink">View Results</a>
+    </div>
+  </main>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="submitModal">
+    <div class="modal">
+      <h3>Confirm Submission</h3>
+      <p>Are you sure you want to submit your assessment? Please review your answers before confirming.</p>
+      <div class="modal-buttons">
+        <button class="modal-button cancel-button" onclick="cancelSubmission()">Cancel</button>
+        <button class="modal-button confirm-button" onclick="confirmSubmission()">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Clock functionality
+    function updateClock() {
+      const now = new Date();
+
+      // Update time
+      const time = now.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+      document.getElementById('clock').textContent = time;
+
+      // Update date
+      const date = now.toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      document.getElementById('date').textContent = date;
+    }
+
+    // Update clock immediately and then every second
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    window.onload = function () {
+      fetchPersonas();
+      fetchCapabilities();
+    };
+
+    const capabilitiesArray = [];
+
+    async function fetchPersonas() {
+      try {
+        const response = await fetch('http://localhost:5000/api/personas');
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const personas = await response.json();
+        const personaSelect = document.getElementById('persona');
+        personaSelect.innerHTML = '<option value="" disabled selected>-- Select a persona --</option>';
+
+        personas.forEach(persona => {
+          const option = document.createElement('option');
+          option.value = persona.name;
+          option.textContent = persona.name;
+          personaSelect.appendChild(option);
+        });
+      } catch (error) {
+        console.error('Error fetching personas:', error);
+      }
+    }
+
+    async function fetchCapabilities() { 
+  try {
+    const response = await fetch('http://localhost:5000/api/capabilities');
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const data = await response.json();
+
+    // Store data in a global variable
+    window.capabilitiesArray = data;
+
+    // Convert data into an object for easy lookup (keyed by name)
+    window.capabilitiesData = data.reduce((acc, item) => {
+      acc[item.name] = {
+        description: item.description,
+        logo: item.logo_link
+      };
+      return acc;
+    }, {});
+
+    console.log("Capabilities fetched successfully:", window.capabilitiesData);
+    
+  } catch (error) {
+    console.error('Error fetching capabilities:', error);
+    alert('There was an error fetching the capabilities. Please try again later.');
+  }
+}
+
+
+    function toggleSelectAll() {
+      const checkboxes = document.querySelectorAll('input[name="capabilities[]"]');
+      const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+      const isChecked = selectAllCheckbox.checked;
+
+      checkboxes.forEach(checkbox => {
+        checkbox.checked = isChecked;
+      });
+
+      const capabilities = Object.keys(window.capabilitiesData || {});
+      capabilities.forEach(capability => {
+        const checkbox = document.querySelector(`input[name="capabilities[]"][value="${capability}"]`);
+        if (checkbox) {
+          displayMaturityGrid(capability, checkbox.checked);
+        }
+      });
+
+      updateScoreBar();
+    }
+
+    function enableCapabilities() {
+  if (window.capabilitiesArray && window.capabilitiesArray.length > 0) {
+    const capabilitiesGroup = document.getElementById('capabilitiesGroup');
+    const capabilitiesTable = document.getElementById('capabilities');
+
+    // Clear previous table content
+    capabilitiesTable.innerHTML = '';
+
+    // Ensure the section is visible
+    capabilitiesGroup.style.display = 'block';
+
+    window.capabilitiesArray.forEach(item => {
+      const { name, logo_link } = item; // Extract correct properties
+
+      // Create table row
+      const row = document.createElement('tr');
+
+      // Create icon cell
+      const cellIcon = document.createElement('td');
+      cellIcon.style.width = '40px';
+      const icon = document.createElement('img');
+      icon.src = logo_link;
+      icon.alt = `${name} icon`;
+      icon.style.width = '24px';
+      icon.style.height = '24px';
+      cellIcon.appendChild(icon);
+
+      // Create name cell
+      const cellLabel = document.createElement('td');
+      cellLabel.textContent = name;
+
+      // Create checkbox cell
+      const cellCheckbox = document.createElement('td');
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.name = 'capabilities[]';
+      checkbox.value = name;
+      checkbox.addEventListener('change', () => {
+        updateScoreBar();
+        displayMaturityGrid(name, checkbox.checked);
+      });
+      cellCheckbox.appendChild(checkbox);
+
+      // Append cells to row
+      row.appendChild(cellIcon);
+      row.appendChild(cellLabel);
+      row.appendChild(cellCheckbox);
+
+      // Append row to table
+      capabilitiesTable.appendChild(row);
+    });
+  } else {
+    console.error('Capabilities data is empty or invalid.');
+  }
+}
+
+    function updateScoreBar() {
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+      const scoreBar = document.getElementById('scoreBar').firstElementChild;
+      scoreBar.style.width = (checkboxes.length / Object.keys(window.capabilitiesData || {}).length) * 100 + '%';
+
+      const descriptionsDiv = document.getElementById('descriptions');
+      descriptionsDiv.innerHTML = '';
+
+      const headingElement = document.createElement('h2');
+      headingElement.textContent = "Maturity Levels";
+      descriptionsDiv.appendChild(headingElement);
+
+      const maturityTable = document.createElement('table');
+      maturityTable.classList.add('maturity-table');
+
+      const tableHeaderRow = document.createElement('tr');
+      tableHeaderRow.innerHTML = `
+        <th>Level</th>
+        <th>Generalized Heading</th>
+        <th>Description</th>
+      `;
+      maturityTable.appendChild(tableHeaderRow);
+
+      const levels = [
+        { level: 0, heading: 'No Existence', description: 'The capability is effectively non-existent within the target group. No discussions, processes, or measurements are in place.' },
+        { level: 1, heading: 'Initial Awareness', description: 'Preliminary knowledge, processes, or automation opportunities are beginning to form and spread among a limited set of individuals or teams.' },
+        { level: 2, heading: 'Developing Foundation', description: 'Basic understanding or implementation of the capability exists. Limited adoption, early processes, or initial metrics are beginning to scale.' },
+        { level: 3, heading: 'Established & Operational', description: 'Capability is well-established, standardized, and integrated into regular operations. Metrics and processes are consistently applied.' },
+        { level: 4, heading: 'Advanced & Leading', description: 'The target group demonstrates leadership, with fully integrated, refined, and optimized processes, metrics, and automation aligned with business goals.' }
+      ];
+
+      levels.forEach(level => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${level.level}</td>
+          <td>${level.heading}</td>
+          <td>${level.description}</td>
+        `;
+        maturityTable.appendChild(row);
+      });
+
+      descriptionsDiv.appendChild(maturityTable);
+    }
+
+    function displayMaturityGrid(capability, isChecked) {
+      const maturityGridsContainer = document.getElementById('maturityGrids');
+      const definition = window.capabilitiesData[capability]["description"];
+      if (!definition) {
+        console.error(`Definition not found for capability: ${capability}`);
+        return;
+      }
+
+      if (isChecked) {
+        const grid = document.createElement('div');
+        grid.className = 'maturity-level';
+        grid.innerHTML = `
+          <h3>${capability}</h3>
+          <p>${definition}</p>
+          <table class="maturity-grid">
+            <thead>
+              <tr>
+                <th></th>
+                <th>No Existence</th>
+                <th>Initial Awareness</th>
+                <th>Developing Foundation</th>
+                <th>Established & Operational</th>
+                <th>Advanced & Leading</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Knowledge</td>
+                <td><input type="radio" name="${capability}_knowledge" value="0" required></td>
+                <td><input type="radio" name="${capability}_knowledge" value="1"></td>
+                <td><input type="radio" name="${capability}_knowledge" value="2"></td>
+                <td><input type="radio" name="${capability}_knowledge" value="3"></td>
+                <td><input type="radio" name="${capability}_knowledge" value="4"></td>
+              </tr>
+              <tr>
+                <td>Process</td>
+                <td><input type="radio" name="${capability}_process" value="0" required></td>
+                <td><input type="radio" name="${capability}_process" value="1"></td>
+                <td><input type="radio" name="${capability}_process" value="2"></td>
+                <td><input type="radio" name="${capability}_process" value="3"></td>
+                <td><input type="radio" name="${capability}_process" value="4"></td>
+              </tr>
+              <tr>
+                <td>Metrics</td>
+                <td><input type="radio" name="${capability}_metrics" value="0" required></td>
+                <td><input type="radio" name="${capability}_metrics" value="1"></td>
+                <td><input type="radio" name="${capability}_metrics" value="2"></td>
+                <td><input type="radio" name="${capability}_metrics" value="3"></td>
+                <td><input type="radio" name="${capability}_metrics" value="4"></td>
+              </tr>
+              <tr>
+                <td>Adoption</td>
+                <td><input type="radio" name="${capability}_adoption" value="0" required></td>
+                <td><input type="radio" name="${capability}_adoption" value="1"></td>
+                <td><input type="radio" name="${capability}_adoption" value="2"></td>
+                <td><input type="radio" name="${capability}_adoption" value="3"></td>
+                <td><input type="radio" name="${capability}_adoption" value="4"></td>
+              </tr>
+              <tr>
+                <td>Automation</td>
+                <td><input type="radio" name="${capability}_automation" value="0" required></td>
+                <td><input type="radio" name="${capability}_automation" value="1"></td>
+                <td><input type="radio" name="${capability}_automation" value="2"></td>
+                <td><input type="radio" name="${capability}_automation" value="3"></td>
+                <td><input type="radio" name="${capability}_automation" value="4"></td>
+              </tr>
+            </tbody>
+          </table>
+        `;
+        maturityGridsContainer.appendChild(grid);
+      } else {
+        const grids = maturityGridsContainer.querySelectorAll('.maturity-level');
+        grids.forEach(grid => {
+          if (grid.querySelector('h3').textContent === capability) {
+            maturityGridsContainer.removeChild(grid);
+          }
+        });
+      }
+    }
+
+    function showSubmitModal(event) {
+      event.preventDefault();
+      document.getElementById('submitModal').style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function cancelSubmission() {
+      document.getElementById('submitModal').style.display = 'none';
+      document.body.style.overflow = 'auto';
+
+      // Clear all form inputs
+      document.getElementById('assessmentForm').reset();
+
+      // Uncheck all capabilities
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+      });
+
+      // Clear maturity grids
+      document.getElementById('maturityGrids').innerHTML = '';
+
+      // Update score bar
+      updateScoreBar();
+
+      // Scroll to top
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+
+    async function confirmSubmission() {
+      document.getElementById('submitModal').style.display = 'none';
+      document.body.style.overflow = 'auto';
+
+      // Hide the "Take Assessment" heading
+      document.querySelector('h2').style.display = 'none';
+
+      // Get form data and submit
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const persona = document.getElementById('persona').value;
+
+      const selectedCapabilities = [];
+      const checkboxes = document.querySelectorAll('input[name="capabilities[]"]:checked');
+
+      checkboxes.forEach(checkbox => {
+        const capability = checkbox.value;
+        const knowledge = document.querySelector(`input[name="${capability}_knowledge"]:checked`).value;
+        const process = document.querySelector(`input[name="${capability}_process"]:checked`).value;
+        const metrics = document.querySelector(`input[name="${capability}_metrics"]:checked`).value;
+        const adoption = document.querySelector(`input[name="${capability}_adoption"]:checked`).value;
+        const automation = document.querySelector(`input[name="${capability}_automation"]:checked`).value;
+
+        selectedCapabilities.push({
+          capability,
+          scores: {
+            knowledge: parseInt(knowledge),
+            process: parseInt(process),
+            metrics: parseInt(metrics),
+            adoption: parseInt(adoption),
+            automation: parseInt(automation),
+          },
+        });
+      });
+
+      try {
+        const response = await fetch('http://localhost:5000/api/customers', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name,
+            email,
+            persona,
+            selectedCapabilities,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Success:', data);
+
+        // Clear local storage after successful submission
+        localStorage.removeItem('assessmentFormData');
+
+        // Store the data and show thank you message
+        sessionStorage.setItem('maturityScores', JSON.stringify(selectedCapabilities));
+        sessionStorage.setItem('name', JSON.stringify(name));
+        document.getElementById('assessmentForm').style.display = 'none';
+        document.getElementById('thankYouMessage').style.display = 'block';
+      }
+      catch (error) {
+        console.error('Error submitting form:', error);
+        alert('There was an error submitting the form. Please try again.');
+      }
+    }
+
+    // Load saved data when the page loads
+    window.addEventListener('load', function () {
+      updateClock();
+      setInterval(updateClock, 1000);
+      fetchPersonas();
+      fetchCapabilities();
+      //loadFromLocalStorage();
+    });
+
+    // Update the form submit event listener
+    document.getElementById('assessmentForm').addEventListener('submit', showSubmitModal);
+  </script>
+</body>
+
+</html>

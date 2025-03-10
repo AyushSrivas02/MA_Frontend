@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FinOps Assessment Results</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #E3E3E3;
+      color: #000;
+    }
+
+    header {
+      background-color: #CC112F;
+      color: white;
+      padding: 1.5rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .clock-container {
+      flex: 1;
+      text-align: left;
+    }
+
+    #clock, #date {
+      margin: 5px 0;
+    }
+
+    .center-content {
+      flex: 2;
+      text-align: center;
+    }
+
+    .center-content h1 {
+      margin: 0 0 10px 0;
+    }
+
+    nav {
+      margin-top: 10px;
+    }
+
+    nav a {
+      margin: 0 15px;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .end-content {
+      flex: 1;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .end-content img {
+      height: 100px;
+    }
+
+    main {
+      padding: 2rem;
+      max-width: 900px;
+      margin: 20px auto;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      color: rgb(0, 0, 0);
+      margin: 0 0 10px;
+      padding-bottom: 5px;
+      text-decoration: underline;
+    }
+
+    #chartsContainer {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .capability-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      width: 100%;
+    }
+
+    .chart-container {
+      width: 48%;
+    }
+
+    .average-score {
+      font-size: 16px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .maturity-stage {
+      font-size: 14px;
+      color: #555;
+    }
+
+    .view-more-link {
+      display: block;
+      text-align: center;
+      margin-top: 30px;
+      color: #CC112F;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .view-more-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="clock-container">
+      <div id="clock"></div>
+      <div id="date"></div>
+    </div>
+
+    <div class="center-content">
+      <h1>FinOps Assessment Tool</h1>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="assessment.html">Take Assessment</a>
+        <a href="results.html">Results</a>
+      </nav>
+    </div>
+
+    <div class="end-content">
+      <img src="LOGO1.png" alt="Logo">
+    </div>
+  </header>
+
+  <main>
+    <h2>Thank you for your submission!</h2>
+    <p>Your responses have been recorded successfully.</p>
+
+    <!-- Graph container -->
+    <div id="chartsContainer"></div>
+
+    <!-- View More link -->
+    <a href="/viewmore.html" class="view-more-link">View More</a>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Clock functionality
+    function updateClock() {
+      const now = new Date();
+      
+      // Update time
+      const time = now.toLocaleTimeString('en-US', { 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        second: '2-digit' 
+      });
+      document.getElementById('clock').textContent = time;
+      
+      // Update date
+      const date = now.toLocaleDateString('en-US', { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+      document.getElementById('date').textContent = date;
+    }
+
+    const maturityScores = JSON.parse(sessionStorage.getItem('maturityScores')) || [];
+    const lensColors = {
+      'Knowledge': '#990A21',
+      'Process': '#B40E28',
+      'Metrics': '#CC112F',
+      'Adoption': '#D98589',
+      'Automation': '#E5B5B7'
+    };
+    const lenses = ['Knowledge', 'Process', 'Metrics', 'Adoption', 'Automation'];
+
+    function getMaturityStage(averageScore) {
+      if (averageScore >= 0 && averageScore <= 1) {
+        return 'Crawl Stage: In this stage, organizations start understanding FinOps with basic processes and simple tools. They set initial goals, track basic metrics, and focus on quick, easy improvements.';
+      } else if (averageScore > 1 && averageScore <= 3) {
+        return 'Walk Stage: Here, processes and automation grow, and more complex issues are addressed. KPIs improve, and FinOps expands across the organization.';
+      } else if (averageScore > 3 && averageScore <= 4) {
+        return 'Run Stage: In the Run stage, FinOps is fully automated, and all teams follow the processes. Complex issues are solved, and the focus is on continuous improvement and optimization with high-performance goals.';
+      }
+      return 'Unknown Stage';
+    }
+
+    function createCharts() {
+      if (!maturityScores || maturityScores.length === 0) {
+        console.error('No maturity scores found.');
+        return;
+      }
+      console.log(maturityScores);
+      const chartsContainer = document.getElementById('chartsContainer');
+      maturityScores.forEach(score => {
+        const capabilityContainer = document.createElement('div');
+        capabilityContainer.className = 'capability-container';
+        chartsContainer.appendChild(capabilityContainer);
+
+        // Bar chart
+        const canvasIdBar = `maturityChartBar-${score.capability}`;
+        const barChartContainer = document.createElement('div');
+        barChartContainer.className = 'chart-container';
+        barChartContainer.innerHTML = `<h3>${score.capability} (Bar Chart)</h3><canvas id="${canvasIdBar}" width="400" height="200"></canvas>`;
+        capabilityContainer.appendChild(barChartContainer);
+
+        const data = lenses.map(lens => score.scores[lens.toLowerCase()]);
+        const ctxBar = document.getElementById(canvasIdBar).getContext('2d');
+        new Chart(ctxBar, {
+          type: 'bar',
+          data: {
+            labels: lenses,
+            datasets: [{
+              label: 'Maturity Scores',
+              data: data,
+              backgroundColor: lenses.map(lens => lensColors[lens]),
+              borderColor: lenses.map(lens => lensColors[lens]),
+              borderWidth: 1
+            }]
+          },
+          options: {
+            scales: {
+              x: { title: { display: true, text: 'Lenses' } },
+              y: { title: { display: true, text: 'Maturity Scores' }, suggestedMin: 0, suggestedMax: 4 }
+            }
+          }
+        });
+
+        // Line chart
+        const canvasIdLine = `maturityChartLine-${score.capability}`;
+        const lineChartContainer = document.createElement('div');
+        lineChartContainer.className = 'chart-container';
+        lineChartContainer.innerHTML = `<h3>${score.capability} (Line Chart)</h3><canvas id="${canvasIdLine}" width="400" height="200"></canvas>`;
+        capabilityContainer.appendChild(lineChartContainer);
+
+        const ctxLine = document.getElementById(canvasIdLine).getContext('2d');
+        new Chart(ctxLine, {
+          type: 'line',
+          data: {
+            labels: lenses,
+            datasets: [{
+              label: 'Maturity Scores (Line Graph)',
+              data: data,
+              backgroundColor: 'rgba(0,0,0,0)',
+              borderColor: lenses.map(lens => lensColors[lens]),
+              borderWidth: 2,
+              fill: false,
+              tension: 0.1
+            }]
+          },
+          options: {
+            scales: {
+              x: { title: { display: true, text: 'Lenses' } },
+              y: { title: { display: true, text: 'Maturity Scores' }, suggestedMin: 0, suggestedMax: 4 }
+            }
+          }
+        });
+
+        // Calculate average score
+        const averageScore = data.reduce((sum, score) => sum + score, 0) / data.length;
+        const avgScoreContainer = document.createElement('div');
+        avgScoreContainer.className = 'average-score';
+        avgScoreContainer.innerHTML = `
+          <p>Average Score: ${averageScore.toFixed(2)}</p>
+          <p class="maturity-stage">${getMaturityStage(averageScore)}</p>
+        `;
+        chartsContainer.appendChild(avgScoreContainer);
+      });
+    }
+    
+    // Update clock immediately and then every second
+    updateClock();
+    setInterval(updateClock, 1000);
+    
+    // Create charts immediately when the page loads
+    createCharts();
+    console.log(maturityScores);
+  </script>
+</body>
+</html>
