@@ -430,7 +430,7 @@
 
     async function fetchPersonas() {
       try {
-        const response = await fetch('http://localhost:5000/api/personas');
+        const response = await fetch('https://maturity-assessment.onrender.com/api/personas');
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -453,7 +453,7 @@
 
     async function fetchCapabilities() { 
   try {
-    const response = await fetch('http://localhost:5000/api/capabilities');
+    const response = await fetch('https://maturity-assessment.onrender.com/api/capabilities');
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
@@ -748,7 +748,7 @@
       });
 
       try {
-        const response = await fetch('http://localhost:5000/api/customers', {
+        const response = await fetch('https://maturity-assessment.onrender.com/api/customers', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
